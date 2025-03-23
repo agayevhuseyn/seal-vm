@@ -1,0 +1,57 @@
+include './token.seal'
+
+const tokens = []
+
+var line = 1
+
+extern define get_tokens(src)
+  var word = ''
+  for c in src
+    if c == '('
+      push(tokens, Token(token_type.LPAREN, c, line))
+    else if c == ')'
+      push(tokens, Token(token_type.RPAREN, c, line))
+    else if c == '+'
+      push(tokens, Token(token_type.PLUS, c, line))
+    else if c == '-'
+      push(tokens, Token(token_type.MINUS, c, line))
+    else if c == '\n' or c == '\t' or c == ' '
+      if c == '\n' then line += 1
+
+  push(tokens, Token(token_type.EOF, 'eof', line))
+  return tokens
+
+define is_digit(c)
+  if (c == '0' or
+      c == '1' or
+      c == '2' or
+      c == '3' or
+      c == '4' or
+      c == '5' or
+      c == '6' or
+      c == '7' or
+      c == '8' or
+      c == '9') then return true
+  return false
+
+define is_number(s)
+  for c in s
+    if not is_digit(c) then return false
+  return true
+
+define to_digit(c)
+  if c == '0' then return 0
+  if c == '1' then return 1
+  if c == '2' then return 2
+  if c == '3' then return 3
+  if c == '4' then return 4
+  if c == '5' then return 5
+  if c == '6' then return 6
+  if c == '7' then return 7
+  if c == '8' then return 8
+  if c == '9' then return 9
+
+define to_number(s)
+  var num = 0
+  for c in s do num = num * 10 + to_digit(c)
+  return num

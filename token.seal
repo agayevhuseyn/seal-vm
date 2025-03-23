@@ -1,0 +1,16 @@
+extern const token_type = {
+  EOF = 0,
+  ID  = 1,
+  INT = 2,
+  LPAREN = 3,
+  RPAREN = 4,
+  PLUS   = 5,
+  MINUS  = 6
+}
+
+extern define Token(type, val, line)
+  return {
+    type = type,
+    val  = val,
+    line = line
+  }

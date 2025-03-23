@@ -1,0 +1,8 @@
+include './lexer.seal'
+
+const
+  src = fread(fopen('prog.seal', 'r'))
+  tokens = get_tokens(src)
+
+for token in tokens
+  writeln(token)
