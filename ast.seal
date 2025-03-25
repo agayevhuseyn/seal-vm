@@ -1,0 +1,51 @@
+include './token.seal'
+
+extern const
+  AST_NULL = 0
+  AST_COMP = 1
+  AST_FUNC_CALL = 2
+  AST_INT  = 3
+  AST_BINARY = 4
+
+extern define AST(type, val)
+  return {
+    type = type,
+    val  = val
+  }
+
+extern define Binary(left, op, right)
+  return AST(
+    AST_BINARY,
+    {
+      left  = left,
+      right = right,
+      op = op
+    }
+  )
+
+extern define Func_Call(name, arg)
+  return AST(
+    AST_FUNC_CALL,
+    {
+      name = name,
+      arg  = arg
+    }
+  )
+
+extern define print_ast(root)
+  if root.type == AST_COMP
+    for st in root.val
+      print_ast(st)
+  else if root.type == AST_INT
+    writeln('int:', root.val)
+  else if root.type == AST_BINARY
+    writeln('bin: op:', token_name(root.val.op))
+    print_ast(root.val.left)
+    print_ast(root.val.right)
+  else if root.type == AST_FUNC_CALL
+    writeln('name:', root.val.name)
+    writeln('arg:')
+    print_ast(root.val.arg)
+  else
+    writeln('unercognized type:', root.type)
+    exit(1)

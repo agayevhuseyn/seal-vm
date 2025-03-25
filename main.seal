@@ -1,8 +1,13 @@
 include './lexer.seal'
+include './parser.seal'
+include './ast.seal'
 
 const
-  src = fread(fopen('prog.seal', 'r'))
+  file = fopen('test.seal', 'r')
+  src = fread(file)
   tokens = get_tokens(src)
 
-for token in tokens
-  writeln(token)
+fclose(file)
+
+const root = parse(tokens)
+print_ast(root)

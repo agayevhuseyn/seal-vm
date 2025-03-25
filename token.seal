@@ -1,12 +1,15 @@
-extern const token_type = {
-  EOF = 0,
-  ID  = 1,
-  INT = 2,
-  LPAREN = 3,
-  RPAREN = 4,
-  PLUS   = 5,
-  MINUS  = 6
-}
+// token types
+extern const
+  TOKEN_EOF = 0
+  TOKEN_ID  = 1
+  TOKEN_INT = 2
+  TOKEN_LPAREN = 3
+  TOKEN_RPAREN = 4
+  TOKEN_PLUS   = 5
+  TOKEN_MINUS  = 6
+  TOKEN_MUL    = 7
+  TOKEN_DIV    = 8
+  TOKEN_MOD    = 9
 
 extern define Token(type, val, line)
   return {
@@ -14,3 +17,16 @@ extern define Token(type, val, line)
     val  = val,
     line = line
   }
+
+extern define token_name(type)
+  if type == TOKEN_EOF    then return 'EOF'
+  if type == TOKEN_ID     then return 'id'
+  if type == TOKEN_INT    then return 'int'
+  if type == TOKEN_LPAREN then return '('
+  if type == TOKEN_RPAREN then return ')'
+  if type == TOKEN_PLUS   then return '+'
+  if type == TOKEN_MINUS  then return '-'
+  if type == TOKEN_MUL    then return '*'
+  if type == TOKEN_DIV    then return '/'
+  if type == TOKEN_MOD    then return '%'
+  else return 'UNRECOGNIZED TOKEN'

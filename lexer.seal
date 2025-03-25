@@ -2,24 +2,63 @@ include './token.seal'
 
 const tokens = []
 
-var line = 1
+var
+  line = 1
+  i = 0
 
 extern define get_tokens(src)
-  var word = ''
-  for c in src
-    if c == '('
-      push(tokens, Token(token_type.LPAREN, c, line))
-    else if c == ')'
-      push(tokens, Token(token_type.RPAREN, c, line))
-    else if c == '+'
-      push(tokens, Token(token_type.PLUS, c, line))
-    else if c == '-'
-      push(tokens, Token(token_type.MINUS, c, line))
-    else if c == '\n' or c == '\t' or c == ' '
-      if c == '\n' then line += 1
+  while i < len(src)
+    get_token(src)
 
-  push(tokens, Token(token_type.EOF, 'eof', line))
+  push(tokens, Token(TOKEN_EOF, 'EOF', line))
   return tokens
+
+define get_token(src)
+  const c = src[i]
+  i += 1
+  if c == '('
+    push(tokens, Token(TOKEN_LPAREN, c, line))
+  else if c == ')'
+    push(tokens, Token(TOKEN_RPAREN, c, line))
+  else if c == '+'
+    push(tokens, Token(TOKEN_PLUS, c, line))
+  else if c == '-'
+    push(tokens, Token(TOKEN_MINUS, c, line))
+  else if c == '*'
+    push(tokens, Token(TOKEN_MUL, c, line))
+  else if c == '/'
+    push(tokens, Token(TOKEN_DIV, c, line))
+  else if c == '%'
+    push(tokens, Token(TOKEN_MOD, c, line))
+  else if c == '\n' or c == '\t' or c == ' '
+    if c == '\n' then line += 1
+  else if is_digit(c)
+    push(tokens, Token(TOKEN_INT, get_number(src), line))
+  else if is_alpha(c)
+    push(tokens, Token(TOKEN_ID, get_id(src), line))
+  else
+    writeln('at line:', line, '\nunrecognized character:', c)
+    exit(1)
+
+define get_id(src)
+  i -= 1
+  var word = ''
+  while i < len(src)
+    const c = src[i]
+    if !is_alpha(c)
+      return word
+    word += c
+    i += 1
+
+define get_number(src)
+  i -= 1
+  var word = ''
+  while i < len(src)
+    const c = src[i]
+    if !is_digit(c)
+      return to_number(word)
+    word += c
+    i += 1
 
 define is_digit(c)
   if (c == '0' or
@@ -55,3 +94,58 @@ define to_number(s)
   var num = 0
   for c in s do num = num * 10 + to_digit(c)
   return num
+
+define is_alpha(c)
+  if (c == 'A' or
+      c == 'B' or
+      c == 'C' or
+      c == 'D' or
+      c == 'E' or
+      c == 'F' or
+      c == 'G' or
+      c == 'H' or
+      c == 'I' or
+      c == 'J' or
+      c == 'K' or
+      c == 'L' or
+      c == 'M' or
+      c == 'N' or
+      c == 'O' or
+      c == 'P' or
+      c == 'Q' or
+      c == 'R' or
+      c == 'S' or
+      c == 'T' or
+      c == 'U' or
+      c == 'V' or
+      c == 'W' or
+      c == 'X' or
+      c == 'Y' or
+      c == 'Z' or
+      c == 'a' or
+      c == 'b' or
+      c == 'c' or
+      c == 'd' or
+      c == 'e' or
+      c == 'f' or
+      c == 'g' or
+      c == 'h' or
+      c == 'i' or
+      c == 'j' or
+      c == 'k' or
+      c == 'l' or
+      c == 'm' or
+      c == 'n' or
+      c == 'o' or
+      c == 'p' or
+      c == 'q' or
+      c == 'r' or
+      c == 's' or
+      c == 't' or
+      c == 'u' or
+      c == 'v' or
+      c == 'w' or
+      c == 'x' or
+      c == 'y' or
+      c == 'z') then return true
+  return false

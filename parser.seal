@@ -1,0 +1,81 @@
+include './token.seal'
+include './ast.seal'
+
+var
+  tokens
+  i = 0
+
+extern define parse(_tokens)
+  tokens = _tokens
+
+  const body = []
+
+  while i < len(tokens)
+    if cur().type == TOKEN_EOF then stop
+
+    push(body, expr())
+  
+  return AST(AST_COMP, body)
+
+define cur()
+  return tokens[i]
+
+define adv()
+  const token = cur()
+  i += 1
+  return token
+
+define match(type)
+  return if cur().type == type then true else false
+
+define eat(type)
+  if cur().type != type
+    writeln(format('line: %\nexpected type %, got %',
+            tokens[i].line, token_name(type), token_name(tokens[i].type)))
+    exit(1)
+  return adv()
+
+define expr()
+  return term()
+
+define term() 
+  var left = factor()
+
+  while cur().type == TOKEN_PLUS or cur().type == TOKEN_MINUS
+    var bin = Binary(left, adv().type, factor())
+    left = bin
+
+  return left
+    
+define factor()
+  var left = primary()
+
+  while (cur().type == TOKEN_MUL or
+         cur().type == TOKEN_DIV or
+         cur().type == TOKEN_MOD)
+    var bin = Binary(left, adv().type, primary())
+    left = bin
+
+  return left
+
+define primary()
+  const token = cur()
+
+  if token.type == TOKEN_INT
+    return AST(AST_INT, adv().val)
+  if token.type == TOKEN_LPAREN
+    adv()
+    const expr = expr()
+    eat(TOKEN_RPAREN)
+    return expr
+  if token.type == TOKEN_ID
+    return func_call()
+  writeln('unexpected token at factor:', token)
+  exit(1)
+
+define func_call()
+  const name = eat(TOKEN_ID)
+  eat(TOKEN_LPAREN)
+  const arg = expr()
+  eat(TOKEN_RPAREN)
+  return Func_Call(name.val, arg)
