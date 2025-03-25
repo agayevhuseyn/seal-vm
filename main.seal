@@ -1,6 +1,7 @@
 include './lexer.seal'
 include './parser.seal'
 include './ast.seal'
+include './compiler.seal'
 
 const
   file = fopen('test.seal', 'r')
@@ -10,4 +11,6 @@ const
 fclose(file)
 
 const root = parse(tokens)
-print_ast(root)
+//print_ast(root)
+compile(root)
+writeln(sout)

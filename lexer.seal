@@ -1,12 +1,15 @@
 include './token.seal'
 
-const tokens = []
+var tokens = []
 
 var
   line = 1
   i = 0
 
 extern define get_tokens(src)
+  tokens = []
+  line = 1
+  i = 0
   while i < len(src)
     get_token(src)
 

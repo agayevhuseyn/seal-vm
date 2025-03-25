@@ -2,9 +2,9 @@ include './token.seal'
 
 extern const
   AST_NULL = 0
-  AST_COMP = 1
-  AST_FUNC_CALL = 2
-  AST_INT  = 3
+  AST_INT  = 1
+  AST_COMP = 2
+  AST_FUNC_CALL = 3
   AST_BINARY = 4
 
 extern define AST(type, val)
