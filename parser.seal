@@ -1,81 +1,83 @@
 include './token.seal'
 include './ast.seal'
 
-var
-  tokens
-  i = 0
+define Parser(tokens)
+  return {
+    tokens = tokens,
+    i = 0
+  }
 
-extern define parse(_tokens)
-  tokens = _tokens
+extern define parse(tokens)
+  const
+    parser = Parser(tokens)
+    body = []
 
-  const body = []
+  while parser.i < len(parser.tokens)
+    if cur(parser).type == TOKEN_EOF then stop
 
-  while i < len(tokens)
-    if cur().type == TOKEN_EOF then stop
-
-    push(body, expr())
+    push(body, expr(parser))
   
   return AST(AST_COMP, body)
 
-define cur()
-  return tokens[i]
+define cur(parser)
+  return parser.tokens[parser.i]
 
-define adv()
-  const token = cur()
-  i += 1
+define adv(parser)
+  const token = cur(parser)
+  parser.i += 1
   return token
 
-define match(type)
-  return if cur().type == type then true else false
+define match(parser, type)
+  return if cur(parser).type == type then true else false
 
-define eat(type)
-  if cur().type != type
+define eat(parser, type)
+  if cur(parser).type != type
     writeln(format('line: %\nexpected type %, got %',
-            tokens[i].line, token_name(type), token_name(tokens[i].type)))
+            cur(parser).line, token_name(type), token_name(cur(parser).type)))
     exit(1)
-  return adv()
+  return adv(parser)
 
-define expr()
-  return term()
+define expr(parser)
+  return term(parser)
 
-define term() 
-  var left = factor()
+define term(parser) 
+  var left = factor(parser)
 
-  while cur().type == TOKEN_PLUS or cur().type == TOKEN_MINUS
-    var bin = Binary(left, adv().type, factor())
+  while cur(parser).type == TOKEN_PLUS or cur(parser).type == TOKEN_MINUS
+    var bin = Binary(left, adv(parser).type, factor(parser))
     left = bin
 
   return left
     
-define factor()
-  var left = primary()
+define factor(parser)
+  var left = primary(parser)
 
-  while (cur().type == TOKEN_MUL or
-         cur().type == TOKEN_DIV or
-         cur().type == TOKEN_MOD)
-    var bin = Binary(left, adv().type, primary())
+  while (cur(parser).type == TOKEN_MUL or
+         cur(parser).type == TOKEN_DIV or
+         cur(parser).type == TOKEN_MOD)
+    var bin = Binary(left, adv(parser).type, primary(parser))
     left = bin
 
   return left
 
-define primary()
-  const token = cur()
+define primary(parser)
+  const token = cur(parser)
 
   if token.type == TOKEN_INT
-    return AST(AST_INT, adv().val)
+    return AST(AST_INT, adv(parser).val)
   if token.type == TOKEN_LPAREN
-    adv()
-    const expr = expr()
-    eat(TOKEN_RPAREN)
+    adv(parser)
+    const expr = expr(parser)
+    eat(parser, TOKEN_RPAREN)
     return expr
   if token.type == TOKEN_ID
-    return func_call()
+    return func_call(parser)
   writeln('unexpected token at factor:', token)
   exit(1)
 
-define func_call()
-  const name = eat(TOKEN_ID)
-  eat(TOKEN_LPAREN)
-  const arg = expr()
-  eat(TOKEN_RPAREN)
+define func_call(parser)
+  const name = eat(parser, TOKEN_ID)
+  eat(parser, TOKEN_LPAREN)
+  const arg = expr(parser)
+  eat(parser, TOKEN_RPAREN)
   return Func_Call(name.val, arg)

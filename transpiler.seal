@@ -1,0 +1,30 @@
+include './token.seal'
+include './ast.seal'
+
+extern define transpile_to_js(root)
+  return genjs(root)
+
+define genjs(root)
+  var out = ''
+  if root.type == AST_INT
+    out += format('%', root.val)
+  else if root.type == AST_COMP
+    for st in root.val
+      out += genjs(st)
+  else if root.type == AST_FUNC_CALL
+    out += 'console.log('
+    out += genjs(root.val.arg)
+    out += ')'
+  else if root.type == AST_BINARY
+    out += genjs(root.val.left) // generate left side
+    if root.val.op == TOKEN_PLUS       then out += ' + '
+    else if root.val.op == TOKEN_MINUS then out += ' - '
+    else if root.val.op == TOKEN_MUL   then out += ' * '
+    else if root.val.op == TOKEN_DIV   then out += ' / '
+    else if root.val.op == TOKEN_MOD   then out += ' % '
+    out += genjs(root.val.right) // generate right side
+  else
+    writeln('unrecognized ast node')
+    exit(1)
+
+  return out

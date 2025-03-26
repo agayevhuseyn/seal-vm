@@ -1,25 +1,26 @@
 include './token.seal'
 include './ast.seal'
 
-extern var sout = ''
-
 extern define compile(root)
+  var out = ''
   if root.type == AST_INT
-    sout += format('push %\n', root.val)
+    out += format('push %\n', root.val)
   else if root.type == AST_COMP
     for st in root.val
-      compile(st)
+      out += compile(st)
   else if root.type == AST_FUNC_CALL
-    compile(root.val.arg)
-    sout += 'writeln\n'
+    out += compile(root.val.arg)
+    out += 'writeln\n'
   else if root.type == AST_BINARY
-    compile(root.val.left)
-    compile(root.val.right)
-    if root.val.op == TOKEN_PLUS then sout += 'add\n'
-    else if root.val.op == TOKEN_MINUS then sout += 'sub\n'
-    else if root.val.op == TOKEN_MUL   then sout += 'mul\n'
-    else if root.val.op == TOKEN_DIV   then sout += 'div\n'
-    else if root.val.op == TOKEN_MOD   then sout += 'mod\n'
+    out += compile(root.val.left)
+    out += compile(root.val.right)
+    if root.val.op == TOKEN_PLUS then out += 'add\n'
+    else if root.val.op == TOKEN_MINUS then out += 'sub\n'
+    else if root.val.op == TOKEN_MUL   then out += 'mul\n'
+    else if root.val.op == TOKEN_DIV   then out += 'div\n'
+    else if root.val.op == TOKEN_MOD   then out += 'mod\n'
   else
     writeln('unrecognized ast node')
     exit(1)
+
+  return out
