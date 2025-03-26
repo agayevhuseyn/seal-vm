@@ -1,67 +1,65 @@
 include './token.seal'
 
-var tokens = []
+extern define Lexer(src)
+  return {
+    src = src,
+    tokens = [],
+    line = 1,
+    i = 0
+  }
 
-var
-  line = 1
-  i = 0
+extern define get_tokens(lexer)
+  while lexer.i < len(lexer.src)
+    get_token(lexer)
 
-extern define get_tokens(src)
-  tokens = []
-  line = 1
-  i = 0
-  while i < len(src)
-    get_token(src)
+  push(lexer.tokens, Token(TOKEN_EOF, 'EOF', lexer.line))
 
-  push(tokens, Token(TOKEN_EOF, 'EOF', line))
-  return tokens
-
-define get_token(src)
-  const c = src[i]
-  i += 1
+define get_token(lexer)
+  const c = lexer.src[lexer.i]
+  lexer.i += 1
   if c == '('
-    push(tokens, Token(TOKEN_LPAREN, c, line))
+    push(lexer.tokens, Token(TOKEN_LPAREN, c, lexer.line))
   else if c == ')'
-    push(tokens, Token(TOKEN_RPAREN, c, line))
+    push(lexer.tokens, Token(TOKEN_RPAREN, c, lexer.line))
   else if c == '+'
-    push(tokens, Token(TOKEN_PLUS, c, line))
+    push(lexer.tokens, Token(TOKEN_PLUS, c, lexer.line))
   else if c == '-'
-    push(tokens, Token(TOKEN_MINUS, c, line))
+    push(lexer.tokens, Token(TOKEN_MINUS, c, lexer.line))
   else if c == '*'
-    push(tokens, Token(TOKEN_MUL, c, line))
+    push(lexer.tokens, Token(TOKEN_MUL, c, lexer.line))
   else if c == '/'
-    push(tokens, Token(TOKEN_DIV, c, line))
+    push(lexer.tokens, Token(TOKEN_DIV, c, lexer.line))
   else if c == '%'
-    push(tokens, Token(TOKEN_MOD, c, line))
+    push(lexer.tokens, Token(TOKEN_MOD, c, lexer.line))
   else if c == '\n' or c == '\t' or c == ' '
-    if c == '\n' then line += 1
+    if c == '\n' then lexer.line += 1
   else if is_digit(c)
-    push(tokens, Token(TOKEN_INT, get_number(src), line))
+    push(lexer.tokens, Token(TOKEN_INT, get_number(lexer), lexer.line))
   else if is_alpha(c)
-    push(tokens, Token(TOKEN_ID, get_id(src), line))
+    push(lexer.tokens, Token(TOKEN_ID, get_id(lexer), lexer.line))
   else
-    writeln('at line:', line, '\nunrecognized character:', c)
+    writeln('at line:', lexer.line, '\nunrecognized character:', c)
     exit(1)
 
-define get_id(src)
-  i -= 1
+define get_id(lexer)
+  lexer.i -= 1
   var word = ''
-  while i < len(src)
-    const c = src[i]
+  while lexer.i < len(lexer.src)
+    const c = lexer.src[lexer.i]
     if !is_alpha(c)
       return word
     word += c
-    i += 1
+    lexer.i += 1
 
-define get_number(src)
-  i -= 1
+define get_number(lexer)
+  lexer.i -= 1
   var word = ''
-  while i < len(src)
-    const c = src[i]
+  while lexer.i < len(lexer.src)
+    const c = lexer.src[lexer.i]
     if !is_digit(c)
       return to_number(word)
     word += c
-    i += 1
+    lexer.i += 1
 
 define is_digit(c)
   if (c == '0' or

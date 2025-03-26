@@ -6,11 +6,13 @@ include './compiler.seal'
 const
   file = fopen('test.seal', 'r')
   src = fread(file)
-  tokens = get_tokens(src)
+  lexer = Lexer(src)
+
+get_tokens(lexer)
 
 fclose(file)
 
-const root = parse(tokens)
+const root = parse(lexer.tokens)
 //print_ast(root)
 compile(root)
 writeln(sout)
