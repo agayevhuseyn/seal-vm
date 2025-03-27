@@ -1,15 +1,70 @@
 // token types
 extern const
-  TOKEN_EOF = 0
-  TOKEN_ID  = 1
-  TOKEN_INT = 2
-  TOKEN_LPAREN = 3
-  TOKEN_RPAREN = 4
-  TOKEN_PLUS   = 5
-  TOKEN_MINUS  = 6
-  TOKEN_MUL    = 7
-  TOKEN_DIV    = 8
-  TOKEN_MOD    = 9
+  TOK_EOF     = 0    // "end of file";
+/* keywords */
+  TOK_VAR     = 1    // var
+  TOK_CONST   = 2    // const
+  TOK_IF      = 3    // if
+  TOK_THEN    = 4    // then
+  TOK_ELSE    = 5    // else
+  TOK_DO      = 6    // do
+  TOK_WHILE   = 7    // while
+  TOK_FOR     = 8    // for
+  TOK_IN      = 9    // in
+  TOK_TO      = 10   // to
+  TOK_BY      = 11   // by
+  TOK_SKIP    = 12   // skip
+  TOK_STOP    = 13   // stop
+  TOK_INCLUDE = 14   // include
+  TOK_EXTERN  = 15   // extern
+  TOK_AS      = 16   // as
+  TOK_DEFINE  = 17   // define
+  TOK_RETURN  = 18   // return
+  TOK_TYPEOF  = 19   // typeof
+  TOK_AND     = 20   // and
+  TOK_OR      = 21   // or
+  TOK_NOT     = 22   // not
+  TOK_TRUE    = 23   // true
+  TOK_FALSE   = 24   // false
+  TOK_NULL    = 25   // null
+  TOK_ID      = 26   // identifier
+  TOK_INT     = 27   // integer value
+  TOK_FLOAT   = 28   // floating value
+  TOK_STRING  = 29   // string value
+/* non-words */
+  TOK_DOT    = 30   // .
+  TOK_COLON  = 31   // :
+  TOK_COMMA  = 32   // ,
+  TOK_PLUS   = 33   // +
+  TOK_MINUS  = 34   // -
+  TOK_MUL    = 35   // *
+  TOK_DIV    = 36   // /
+  TOK_MOD    = 37   // %
+  TOK_POW    = 38   // ^
+  TOK_ASSIGN = 39   // =
+  TOK_PLUS_ASSIGN  = 40   // +=
+  TOK_MINUS_ASSIGN = 41   // -=
+  TOK_MUL_ASSIGN   = 42   // *=
+  TOK_DIV_ASSIGN   = 43   // /=
+  TOK_MOD_ASSIGN   = 44   // %=
+  TOK_POW_ASSIGN   = 45   // ^=
+  TOK_EQ     = 46   // ==
+  TOK_NE     = 47   // !=
+  TOK_GT     = 48   // >
+  TOK_GE     = 49   // >=
+  TOK_LT     = 50   // <
+  TOK_LE     = 51   // <=
+/* parenthesis */
+  TOK_LPAREN = 52   // (
+  TOK_RPAREN = 53   // )
+  TOK_LBRACK = 54   // [
+  TOK_RBRACK = 55   // ]
+  TOK_LBRACE = 56   // {
+  TOK_RBRACE = 57   // }
+/* block-related */
+  TOK_NEWL   = 58   // \n
+  TOK_INDENT = 59   // \t or \s
+  TOK_DEDENT = 60   // <-\t or \s
 
 extern define Token(type, val, line)
   return {
